@@ -12,7 +12,7 @@ import cv2
 
 try:
     print("카메라 구동")
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 except:
     print("카메라 구동실패")
     exit()
@@ -23,6 +23,7 @@ except:
 # 아래의 폭과 높이는 웹캠의 속성을 그대로 가져와 사용하는것.
 width = int(cap.get(3))
 height = int(cap.get(4))
+print('width :', width, 'height :', height)
 
 # 코덱정보를 나타냄 아래의 두줄과 같이 사용할 수 있음.
 # 둘중 어느것을 쓰든 상관없음.
@@ -31,7 +32,7 @@ fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 # fourcc = cv2.VideoWriter_fourcc('D','I','V','X')
 
 # 비디오 저장을 위한 객체를 생성해줌.
-out = cv2.VideoWriter('CurveVideo.mp4',fourcc,20.0,(width, height))
+out = cv2.VideoWriter('TestVideo.mp4',fourcc,20.0,(width, height))
 
 while(True):
     ret, frame = cap.read()
