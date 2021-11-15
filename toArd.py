@@ -5,7 +5,9 @@ import time
 class toArduino:
     def __init__(self):
         self.ser_num = None
-        
+        self.reads = ''
+        self.readlines = []
+
         port_list = sp.comports()
         connected = []
         
@@ -18,7 +20,21 @@ class toArduino:
             self.ser = serial.Serial(comport, 9600, timeout=1)
 
     def read(self):
-        response = self.ser_num.read()
+        response = self.ser_num.read().decode()
+
+        readable = False
+        for i in response:
+            if i == '*':
+                print('read from serial :', self.reads)
+                self.reads = ''
+            
+            if readable:
+                self.reads += i
+
+            if i == '/':
+                readable == True
+
+
         while 1:
             if self.ser_num.readable():
                 response = self.ser_num.readline()
