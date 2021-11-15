@@ -15,9 +15,9 @@ class toArduino:
             for i in port_list:
                 connected.append(i.device)
 
-            print("Connected COM ports :", str(connected))
-            comport = i.device
-            self.ser = serial.Serial(comport, 9600, timeout=1)
+                print("Connected COM ports :", str(connected))
+                comport = i.device
+                self.ser = serial.Serial(comport, 9600, timeout=1)
 
     def read(self):
         response = self.ser_num.read().decode()

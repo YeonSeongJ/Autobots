@@ -78,6 +78,9 @@ def GetLine(frame):
     if center_point[0] > got_center:
         for i in range(1, 15):
             if center_point[0] - got_center < 30 * i:
+                if i > 6:
+                    break
+                
                 if i > 1:
                     text = 'go left - level ' + str(i)
                     steering_level = 6 - i
@@ -85,10 +88,13 @@ def GetLine(frame):
     elif center_point[0] < got_center:
         for i in range(1, 15):
             if got_center - center_point[0] < 30 * i:
+                if i > 6:
+                    break
+
                 if i > 1:
                     text = 'go right - level ' + str(i)
                     steering_level = i + 6
-                    
+
     
     cv2.putText(frame, text, center_point, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
 

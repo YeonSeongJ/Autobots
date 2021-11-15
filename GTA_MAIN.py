@@ -21,10 +21,14 @@ def get_averages(data_list):
     np_list = np.array(data_list)
     unique, counts = np.unique(np_list, return_counts=True)
     result = dict(zip(counts, unique))
+
+    #for debug
+    print(result)
     result = result[max(result)]
 
     return result
 
+cv2.namedWindow('img')
 count = 0
 while video.isOpened():
     ret, frame = video.read()
@@ -36,7 +40,7 @@ while video.isOpened():
         break
     
     # get average steering and speed
-    data = lm.GetLine(frame, HEIGHT, WIDTH)
+    data = lm.GetLine(frame)
     speed_list.append(data[0])
     steering_list.append(data[1])
     if count != 0 and count % 60 == 0:
@@ -56,4 +60,4 @@ while video.isOpened():
         break
 
 cv2.destroyAllWindows()
-
+exit()
