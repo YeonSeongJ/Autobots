@@ -26,6 +26,7 @@ class toArduino:
                 break
             time.sleep(2)
 
-    def send(self, text):
+    def send(self, mode, text):
+        text = '/' + str(mode) + text + '*'
         print('get com :', text)
         self.ser.write(text.encode())

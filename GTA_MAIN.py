@@ -43,12 +43,14 @@ while video.isOpened():
         steering = steering[max(steering)]
 
         # test steering
-        sends = '2' + str(steering)
+        sends = str(steering)
         print(sends)
-        connect.send(sends)
+        connect.send(2, sends)
 
         speed_list = []
         steering_list = []
+
+    count += 1
 
     if cv2.waitKey(0) & 0xFF == ord('q'):
         break
