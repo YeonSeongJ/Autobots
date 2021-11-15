@@ -73,35 +73,27 @@ def GetLine(frame):
 
     # 중심제어
     text = 'on line'
-    speed = 'speed up'
-    tf = False
-    movementPersent = 6
-    # 왼쪽 보고있음
+    steering_level = 6
+    
     if center_point[0] > got_center:
-        for i in range(15):
+        for i in range(1, 15):
             if center_point[0] - got_center < 30 * i:
                 if i > 1:
-                    text = 'go left - ' + str(i) + '%'
-                    speed = 'speed down ' + str(i) + 'km/s'
-                    movementPersent = i
-                    break
-    elif center_point[0] < got_center: # 오른쪽 보고있음
-        for i in range(15):
+                    text = 'go left - level ' + str(i)
+                    steering_level = 6 - i
+
+    elif center_point[0] < got_center:
+        for i in range(1, 15):
             if got_center - center_point[0] < 30 * i:
                 if i > 1:
-                    text = 'go right - ' + str(i) + '%'
-                    speed = 'speed down ' + str(i) + 'km/s'
-                    movementPersent = i + 6
-                    break
+                    text = 'go right - level ' + str(i)
+                    steering_level = i + 6
+                    
     
     cv2.putText(frame, text, center_point, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    if tf != True:
-        speed = 'good speed'
-    cv2.putText(frame, speed, center_speed, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    movementPersent = round((movementPersent / 30) * 12)
 
     cv2.imshow('img', m_result)
     cv2.imshow('img2', m_hsv)
     cv2.imshow('img3', frame)
 
-    return (1, movementPersent)
+    return (1, steering_level)
