@@ -45,7 +45,6 @@ while video.isOpened():
 
         # test steering
         sends = str(steering)
-        print(sends)
         connect.send(2, sends)
 
         speed_list = []
