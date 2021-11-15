@@ -57,4 +57,3 @@ while video.isOpened():
 
 cv2.destroyAllWindows()
 
-
