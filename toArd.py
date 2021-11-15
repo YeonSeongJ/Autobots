@@ -34,7 +34,6 @@ class toArduino:
             if i == '/':
                 readable == True
 
-
         while 1:
             if self.ser_num.readable():
                 response = self.ser_num.readline()
