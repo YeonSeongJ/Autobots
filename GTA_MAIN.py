@@ -16,6 +16,15 @@ WIDTH = 0
 speed_list = []
 steering_list = []
 
+# get average
+def get_averages(data_list):
+    np_list = np.array(data_list)
+    unique, counts = np.unique(np_list, return_counts=True)
+    result = dict(zip(counts, unique))
+    result = result[max(result)]
+
+    return result
+
 count = 0
 while video.isOpened():
     ret, frame = video.read()
@@ -31,16 +40,8 @@ while video.isOpened():
     speed_list.append(data[0])
     steering_list.append(data[1])
     if count != 0 and count % 60 == 0:
-        np_speed = np.array(speed_list)
-        np_steering = np.array(steering_list)
-
-        unique, counts = np.unique(np_speed, return_counts=True)
-        speed = dict(zip(counts, unique))
-        speed = speed[max(speed)]
-
-        unique, counts = np.unique(np_steering, return_counts=True)
-        steering = dict(zip(counts, unique))
-        steering = steering[max(steering)]
+        speed = get_averages(speed_list)
+        steering = get_averages(steering_list)
 
         # test steering
         sends = str(steering)
