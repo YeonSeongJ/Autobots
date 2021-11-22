@@ -78,13 +78,13 @@ while video.isOpened():
     cv2.imshow('img', frame)
 
     input_key = cv2.waitKey(1) & 0xFF
-    if  input_key == ord('q'):
+    if  input_key == ord('q') or input_key == ord('Q'):
         break
-    elif input_key == ord(','):
+    elif input_key == ord(',') or input_key == ord('<'):
         connect.send(2, str(4))
-    elif input_key == ord('.'):
+    elif input_key == ord('.') or input_key == ord('>'):
         connect.send(2, str(8))
-    elif input_key == ord('p'):
+    elif input_key == ord('p') or input_key == ord('P'):
         connect.send(1, str(0))
         input_key = cv2.waitKey(0) & 0xFF
 
