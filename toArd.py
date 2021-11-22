@@ -18,6 +18,8 @@ class toArduino:
                 print("Connected COM ports :", str(connected))
                 comport = i.device
                 self.ser = serial.Serial(comport, 9600, timeout=1)
+        else:
+            print('no serial')
 
     def read(self):
         response = self.ser_num.read().decode()
@@ -44,4 +46,4 @@ class toArduino:
     def send(self, mode, text):
         text = '/' + str(mode) + text + '*'
         print('get com :', text)
-        self.ser.write(text.encode())
+        #self.ser.write(text.encode())

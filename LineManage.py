@@ -8,7 +8,7 @@ import numpy as np
 
 def GetLine(frame):
     HEIGHT, WIDTH = frame.shape[:2]
-    line_check_height = int(HEIGHT / 2)
+    line_check_height = int(HEIGHT / 9 * 5)
     center_point = (int(WIDTH / 2), 30)
 
     center_speed = (int(WIDTH / 2), 300)
@@ -77,23 +77,24 @@ def GetLine(frame):
     
     if center_point[0] > got_center:
         for i in range(1, 15):
-            if center_point[0] - got_center < 30 * i:
+            if center_point[0] - got_center < WIDTH / 24 * i:
                 if i > 6:
                     break
                 
                 if i > 1:
-                    text = 'go left - level ' + str(i)
                     steering_level = 6 - i
+                    text = 'go left - level ' + str(steering_level)
 
     elif center_point[0] < got_center:
         for i in range(1, 15):
-            if got_center - center_point[0] < 30 * i:
+            if got_center - center_point[0] < WIDTH / 24 * i:
                 if i > 6:
                     break
 
                 if i > 1:
-                    text = 'go right - level ' + str(i)
                     steering_level = i + 6
+                    text = 'go right - level ' + str(steering_level)
+
 
     
     cv2.putText(frame, text, center_point, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
