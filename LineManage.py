@@ -99,8 +99,8 @@ def GetLine(frame):
     
     cv2.putText(frame, text, center_point, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
 
-    cv2.imshow('img', m_result)
-    cv2.imshow('img2', m_hsv)
-    cv2.imshow('img3', frame)
+    # cv2.imshow('img', m_result)
+    # cv2.imshow('img2', m_hsv)
+    # cv2.imshow('img3', frame)
 
     return (1, steering_level)

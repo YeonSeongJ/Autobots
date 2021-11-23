@@ -19,6 +19,9 @@ connect.send(2,'0')
 # HEIGHT = 0
 # WIDTH = 0
 
+# valuable for stop
+STOPPED = False
+
 # ready to get average steering and speed control
 speed_list = []
 steering_list = []
@@ -68,57 +71,58 @@ count = 0
 ########################################################################
 for frame in images: 
     s_time = time.time()
-    # ret, frame = video.read()
     if count == 0:
         HEIGHT, WIDTH = frame.shape[:2]
         print('width :', WIDTH, 'height :', HEIGHT)
-
-    # if not ret:
-    #     break
     
-    # get average steering and speed
-    data = lm.GetLine(frame)
-    speed_list.append(data[0])
-    steering_list.append(data[1])
+    if not STOPPED:
+        # get average steering and speed
+        data = lm.GetLine(frame)
+        speed_list.append(data[0])
+        steering_list.append(data[1])
 
-    # if count % 5 == 0:
-    #     cv2.putText(frame, data, (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    #     cv2.imwrite('testimages/' + str(count) + '.jpg', frame)
-    #if count != 0 and count % 30 == 0:
-    if count > 0:    
-        speed = get_averages(speed_list)
-        steering = get_averages(steering_list)
+        # if count % 5 == 0:
+        #     cv2.putText(frame, data, (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
+        #     cv2.imwrite('testimages/' + str(count) + '.jpg', frame)
 
-        # test steering
-        sends = str(steering)
-        connect.send(2, sends)
+        # average fps : 35fps
+        if count >= 0:
+            speed = get_averages(speed_list)
+            steering = get_averages(steering_list)
 
-        # test speed
-        sends = str(speed)
-        connect.send(1, str(1))
+            # test steering
+            sends = str(steering)
+            connect.send(2, sends)
 
-        speed_list = []
-        steering_list = []
+            # test speed
+            sends = str(speed)
+            connect.send(1, str(1))
 
-        text = 'steering : ' + str(steering)
+            speed_list = []
+            steering_list = []
+
+            text = 'steering : ' + str(steering) + '\nspeed : ' + str(speed)
+
+        count += 1
 
     fps = int(1 / (time.time() - s_time))
 
     cv2.putText(frame, str(fps), (100,150), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.putText(frame, text, (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    count += 1
-    #cv2.imshow('img', frame)
+    cv2.imshow('img', frame)
 
-    input_key = cv2.waitKey(0) & 0xFF
-    if  input_key == ord('q'):
+    input_key = cv2.waitKey(1) & 0xFF
+    if  input_key == ord('q') or input_key == ord('Q'):
         break
-    elif input_key == ord(','):
+    elif input_key == ord(',') or input_key == ord('<'):
         connect.send(2, str(4))
-    elif input_key == ord('.'):
+    elif input_key == ord('.') or input_key == ord('>'):
         connect.send(2, str(8))
-    elif input_key == ord('p'):
+    elif input_key == ord('p') or input_key == ord('P'):
         connect.send(1, str(0))
-        input_key = cv2.waitKey(0) & 0xFF
+        STOPPED = True
+    else:
+        STOPPED = False
 
 cv2.destroyAllWindows()
 exit()
