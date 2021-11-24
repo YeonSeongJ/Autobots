@@ -22,6 +22,9 @@ connect.send(2,'0')
 # valuable for stop
 STOPPED = False
 
+# control angle
+ANGLE = 5
+
 # ready to get average steering and speed control
 speed_list = []
 steering_list = []
@@ -44,7 +47,7 @@ text = ''
 # for test by images  ##################################################
 ########################################################################
 cv2.namedWindow('img')
-mypath = 'images/1111'
+mypath = 'images/image111'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 for i in range(len(onlyfiles)):
@@ -77,7 +80,7 @@ for frame in images:
     
     if not STOPPED:
         # get average steering and speed
-        data = lm.GetLine(frame)
+        data = lm.GetLine(frame, ANGLE)
         speed_list.append(data[0])
         steering_list.append(data[1])
 
@@ -107,11 +110,13 @@ for frame in images:
 
     fps = int(1 / (time.time() - s_time))
 
+    angText = 'angle : ' + str(ANGLE)
     cv2.putText(frame, str(fps), (100,150), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    cv2.putText(frame, text, (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
+    cv2.putText(frame, text, (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
+    cv2.putText(frame, angText, (100,250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.imshow('img', frame)
 
-    input_key = cv2.waitKey(1) & 0xFF
+    input_key = cv2.waitKey(0) & 0xFF
     if  input_key == ord('q') or input_key == ord('Q'):
         break
     elif input_key == ord(',') or input_key == ord('<'):
@@ -120,9 +125,11 @@ for frame in images:
         connect.send(2, str(8))
     elif input_key == ord('p') or input_key == ord('P'):
         connect.send(1, str(0))
-        STOPPED = True
-    else:
-        STOPPED = False
+        STOPPED = True if not STOPPED else False
+    elif input_key == ord('u') or input_key == ord('U'):
+        ANGLE += 1
+    elif input_key == ord('d') or input_key == ord('D'):
+        ANGLE -= 1
 
 cv2.destroyAllWindows()
 exit()
