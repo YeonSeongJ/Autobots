@@ -86,11 +86,16 @@ def GetLine(frame, angle):
                 steering_level = i + 6
                 text = 'go right - level ' + str(steering_level)
  
- 
+    if check_contour[0] < center_point[0] and check_contour[1] < center_point[0]:
+        steering_level = 12
+        text = 'go right - level ' + str(steering_level)
+    elif check_contour[0] >= center_point[0] and check_contour[1] >= center_point[0]:
+        steering_level = 0
+        text = 'go left - level ' + str(steering_level)
     
     cv2.putText(frame, text, center_point, cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
  
     cv2.imshow('img3', m_result)
-    cv2.imshow('img2', m_hsv)
+    # cv2.imshow('img2', m_hsv)
  
     return (1, steering_level)
