@@ -3,11 +3,11 @@ import numpy as np
 import LaneManage as lm
 import toArd
 import time
- 
+
 # test by images
 from os import listdir 
 from os.path import isfile, join
- 
+
 # ready to communicate with Arduino and Jetson
 connect = toArd.toArduino()
 # check connect
@@ -31,7 +31,7 @@ NOW_SPEED = 1
 # ready to get average steering and speed control
 speed_list = []
 steering_list = []
- 
+
 # get average
 def get_averages(data_list):
     np_list = np.array(data_list)
@@ -50,15 +50,19 @@ text = ''
 # for test by images  ##################################################
 ########################################################################
 cv2.namedWindow('img')
-mypath = 'images/jtest'
+mypath = 'weights/images/testimage1'
+# mypath = 'images/images'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
- 
-# onlyfiles.remove('.DS_Store')
+
+try:
+    onlyfiles.remove('.DS_Store')
+except:
+    print('no DS')
  
 index = 0
 for i in range(len(onlyfiles)):
     onlyfiles[i] = int(onlyfiles[i][:-4])
- 
+
 sorteds = sorted(onlyfiles)
  
 for i in range(len(onlyfiles)):
@@ -79,11 +83,13 @@ count = 0
 # for test by images  ##################################################
 ########################################################################
 iCount = 0
+
 #for frame in images: 
-print(len(images))
+# print(len(images))
 while 1:
     print('count : ', count, 'iCount :', iCount)
     frame = images[iCount]
+    
     iCount = 0 if iCount == len(images) - 1 else iCount + 1
     s_time = time.time()
     if count == 0:
@@ -92,7 +98,7 @@ while 1:
     
     line_check_height = int(HEIGHT / 13 * ANGLE)
     frame_cut = frame[line_check_height - 50:line_check_height + 50, int(WIDTH / 8 * 2): WIDTH - int(WIDTH / 8 * 2)]
- 
+
     if not STOPPED:
         # get average steering and speed
         data = lm.getLane(frame_cut)
@@ -116,14 +122,14 @@ while 1:
             sends = str(speed)
             connect.send(1, str(1)) if str(NOW_SPEED) != sends else print('on speed')
             NOW_SPEED = 1
- 
+
             speed_list = []
             steering_list = []
  
             text = 'steering : ' + str(steering) + '\nspeed : ' + str(speed)
  
         count += 1
- 
+
     fps = int(1 / (time.time() - s_time))
  
     angText = 'angle : ' + str(ANGLE)
@@ -131,7 +137,7 @@ while 1:
     cv2.putText(frame, text, (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.putText(frame, angText, (100,250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.imshow('img', frame)
- 
+
     input_key = cv2.waitKey(0) & 0xFF
     if  input_key == ord('q') or input_key == ord('Q'):
         break

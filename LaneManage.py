@@ -10,12 +10,21 @@ LIGHTNESS_LEFT = (0,0,0)
 LIGHTNESS_RIGHT = (0,0,0)
 
 def getLane(frame):
-    cv2.imshow('img2', frame)
     HEIGHT, WIDTH = frame.shape[:2]
-    cutWeights = 150
+    cv2.namedWindow('img2')
+    def mouse_event(e, x, y, flags, param):
+        if e == cv2.EVENT_FLAG_LBUTTON:
+            print(frame[y][x])
+    cv2.setMouseCallback("img2", mouse_event, frame)
 
-    l_frame = frame[:,:int(WIDTH / 2) - cutWeights]
-    r_frame = frame[:,int(WIDTH / 2) + cutWeights:]
+    cv2.imshow('img2', frame)
+    cutWeights = 0
+
+    l_frame = frame[:,:HEIGHT]
+    r_frame = frame[:,WIDTH - HEIGHT:]
+
+    # l_frame = cv2.bilateralFilter(l_frame, -1, 40, 20)
+    # r_frame = cv2.bilateralFilter(r_frame, -1, 40, 20)
 
     setLightness(l_frame, 0)
     setLightness(r_frame, 1)
@@ -36,7 +45,7 @@ def GetLine(frame, position):
 
     lower_color = convertLightness(position)
     upper_color = (255, 255, 255)
-    print('low :', lower_color, 'upper :', upper_color)
+    #print('low :', lower_color, 'upper :', upper_color)
     m_range = cv2.inRange(frame, lower_color, upper_color)
     m_result = cv2.bitwise_and(frame, frame, mask=m_range)
  
@@ -48,7 +57,7 @@ def GetLine(frame, position):
     contours_count = 0
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
-        if w > 15 and h > 15 and y == 0:
+        if w > 5 and h > 5 and y == 0:
             if (position == 0 and x == 0) or (position == 1 and x + w == WIDTH):
                 contours_count += 1
                 cv2.rectangle(m_result, (x, y), (x + w, y + h), (255, 0, 0), 3)
@@ -65,7 +74,7 @@ def GetLine(frame, position):
                 elif check_contour[1] < x:
                     check_contour = (w, x + w)
 
-    cv2.circle(m_result, (check_contour[0], 50), 3, (255, 0, 255), 10)
+    #cv2.circle(m_result, (check_contour[0], 50), 3, (255, 0, 255), 10)
     
     # 중심제어
     text = 'on line'
@@ -73,16 +82,17 @@ def GetLine(frame, position):
     
     if position == 0:
         for i in range(1, 7):
-            if check_contour[0] > 30 * i:
+            if check_contour[0] > 14 * i:
                 steering_level += 1
                 text = 'go right - ' + str(steering_level - 6)
     elif position == 1:
         for i in range(1, 7):
-            if check_contour[0] > 30 * i:
+            if check_contour[0] > 14 * i:
                 steering_level -= 1
                 text = 'go left - ' + str(6 - steering_level)
 
     # cv2.putText(frame, text, (int(WIDTH / 2), 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
+
     cv2.imshow('img3', m_result) if position == 0 else cv2.imshow('img4', m_result)
     text = 'left - ' if position == 0 else 'right - ' 
     text += str(steering_level)
@@ -93,10 +103,34 @@ def convertLightness(position):
     global LIGHTNESS_LEFT, LIGHTNESS_RIGHT
     text = LIGHTNESS_LEFT if position == 0 else LIGHTNESS_RIGHT
     # print(str(position) + ' :', text)
-    B = 60
-    G = 60
-    R = 35
-    weights = 20
+    # B = 40
+    # G = 40
+    
+    if position == 0:
+        avg = int(LIGHTNESS_LEFT[0] + LIGHTNESS_LEFT[1] + LIGHTNESS_LEFT[2] / 3)
+        if avg > 110:
+            B = 65
+            G = B
+        elif avg < 80:
+            B = 15
+            G = B
+        else:
+            B = 40
+            G = B
+    elif position == 1:
+        avg = int(LIGHTNESS_RIGHT[0] + LIGHTNESS_RIGHT[1] + LIGHTNESS_RIGHT[2] / 3)
+        if avg > 110:
+            B = 65
+            G = B
+        elif avg < 80:
+            B = 15
+            G = B
+        else:
+            B = 40
+            G = B
+    R = -50
+    weights = 10
+    print('BG :', B)
     if position == 0:
         B += (LIGHTNESS_LEFT[0] - weights) * (LIGHTNESS_LEFT[0] - weights) / 100
         G += (LIGHTNESS_LEFT[1] - weights) * (LIGHTNESS_LEFT[1] - weights) / 100
@@ -113,9 +147,9 @@ def setLightness(frame, position):
     global LIGHTNESS_LEFT, LIGHTNESS_RIGHT
     if position == 0:
         LIGHTNESS_LEFT = cv2.mean(frame)
-        print('left light :', LIGHTNESS_LEFT)
+        # print('left light :', LIGHTNESS_LEFT)
     elif position == 1:
         LIGHTNESS_RIGHT = cv2.mean(frame)
-        print('right light :', LIGHTNESS_RIGHT)
+        # print('right light :', LIGHTNESS_RIGHT)
     return
 
