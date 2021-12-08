@@ -45,7 +45,7 @@ def get_averages(data_list):
     return result
  
 text = ''
- 
+
 ########################################################################
 # for test by images  ##################################################
 ########################################################################
@@ -89,7 +89,8 @@ iCount = 0
 while 1:
     print('count : ', count, 'iCount :', iCount)
     frame = images[iCount]
-    
+    # frame = cv2.bilateralFilter(frame, -1, 40, 20)
+    frame = cv2.medianBlur(frame, 31)
     iCount = 0 if iCount == len(images) - 1 else iCount + 1
     s_time = time.time()
     if count == 0:
@@ -113,7 +114,7 @@ while 1:
         if count >= 0:
             speed = get_averages(speed_list)
             steering = get_averages(steering_list)
- 
+
             # test steering
             sends = str(steering)
             connect.send(2, sends) if sends != '6' else print('straight')
@@ -132,6 +133,11 @@ while 1:
 
     fps = int(1 / (time.time() - s_time))
  
+    def mouse_event(e, x, y, flags, param):
+        if e == cv2.EVENT_FLAG_LBUTTON:
+            print(frame[y][x])
+    cv2.setMouseCallback("img", mouse_event, frame)
+
     angText = 'angle : ' + str(ANGLE)
     cv2.putText(frame, str(fps), (100,150), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.putText(frame, text, (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
