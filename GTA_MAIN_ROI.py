@@ -34,14 +34,52 @@ steering_list = []
 
 # get average
 def get_averages(data_list):
+    print("*" * 10, 'in average', "*" * 10)
+
     np_list = np.array(data_list)
     unique, counts = np.unique(np_list, return_counts=True)
     result = dict(zip(counts, unique))
- 
+
+    degree_check = [0,1,2,10,11,12]
+
+    """
+    1. get direction
+    2. set degree
+    """
+    direction_count = 0
+    # get direction
+    # left : [-x], right : [+x]
+    for i in result:
+        if int(result[i]) < 6:
+            direction_count -= 1
+        elif int(result[i]) > 6:
+            direction_count += 1
+
+    direction = 0
+    if direction_count < 0:
+        direction = -1
+    elif direction_count > 0:
+        direction = 1
+
+    # set degree
+    onDirection = []
+    for i in result:
+        if direction == 0:
+            break
+        if result[i] == '6':
+            continue
+
+        if int(result[i]) > 6 * direction:
+            onDirection.append(int(result[i]))
+
     #for debug
     print(result)
-    result = result[max(result)]
- 
+    if direction == 0:
+        result = result[max(result)]
+    else:
+        result = max(onDirection)
+    print('result :', result)
+    print("*" * 10, 'out average', "*" * 10)
     return result
  
 text = ''
@@ -111,7 +149,7 @@ while 1:
         #     cv2.imwrite('testimages/' + str(count) + '.jpg', frame)
  
         # average fps : 35fps
-        if count >= 0:
+        if count >= 0 and count % 5 == 0:
             speed = get_averages(speed_list)
             steering = get_averages(steering_list)
 
@@ -155,10 +193,6 @@ while 1:
         connect.send(1, str(0))
         NOW_SPEED = 0
         STOPPED = True if not STOPPED else False
-    elif input_key == ord('u') or input_key == ord('U'):
-        ANGLE += 1
-    elif input_key == ord('d') or input_key == ord('D'):
-        ANGLE -= 1
  
 cv2.destroyAllWindows()
 exit()
