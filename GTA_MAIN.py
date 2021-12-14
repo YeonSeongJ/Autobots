@@ -40,8 +40,13 @@ steering_list = []
 # for test by images  ##################################################
 ########################################################################
 cv2.namedWindow('img')
-mypath = 'images/tests'
+mypath = 'images/last'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+
+try:
+    onlyfiles.remove('.DS_Store')
+except:
+    print('no DS')
 
 for i in range(len(onlyfiles)):
     onlyfiles[i] = int(onlyfiles[i][:-4])
@@ -136,7 +141,7 @@ for frame in images:
 
     line_check_height = int(HEIGHT / 13 * ANGLE)
     frame_cut = frame[line_check_height - 30:line_check_height + 30, int(WIDTH / 17 * 2): WIDTH - int(WIDTH / 17 * 2)]
-    cv2.imshow('img2',frame_cut)
+    # cv2.imshow('img2',frame_cut)
     if not STOPPED:
         # get average steering and speed
         data = lm.getLane(frame_cut)
@@ -144,7 +149,7 @@ for frame in images:
         steering_list.append(data[1])
  
         # average fps : 35fps
-        if count >= 0 and count % 3 == 0:
+        if count >= 0:# and count % 3 == 0:
             speed = get_averages(speed_list, True)
             steering = get_averages(steering_list)
  
@@ -179,7 +184,7 @@ for frame in images:
     fps = int(1 / (time.time() - s_time))
  
     cv2.putText(frame, str(fps), (100,150), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
-    cv2.putText(frame, text, (int(WIDTH / 3),int(HEIGHT / 2 - 50)), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
+    cv2.putText(frame, text, (int(WIDTH / 4),int(HEIGHT / 2 - 50)), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3, cv2.LINE_AA)
     cv2.imshow('img', frame)
  
     input_key = cv2.waitKey(0) & 0xFF
